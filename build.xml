@@ -1,0 +1,77 @@
+<project name="jurlmap" default="build" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+	<property file="build.properties"/>
+	<property name="target" value="target"/>
+	<property name="compile.classpath" value="lib/servlet-api-2.5.jar"/>
+
+	<target name="build" depends="compile" description="Build compiled jar">
+		<mkdir dir="${target}"/>
+
+		<jar destfile="${target}/jurlmap.jar">
+			<fileset dir="${target}/classes"/>
+
+			<fileset dir=".">
+				<include name="README"/>
+				<include name="CHANGES"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="compile" description="Compile classes">
+		<mkdir dir="${target}"/>
+		<delete dir="${target}/classes"/>
+		<mkdir dir="${target}/classes"/>
+
+		<javac 
+			destdir="${target}/classes"
+			classpath="${compile.classpath}"
+			source="1.5"
+			target="1.5"
+			debug="true">
+
+			<src path="src"/>
+		</javac>
+	</target>
+
+	<target name="resolve" description="Download dependencies">
+		<ivy:retrieve/>
+	</target>
+
+	<target name="src" description="Create source zip">
+		<tstamp>
+			<format property="TODAY" pattern="yyyyMMdd" locale="en,UK"/>
+		</tstamp>
+
+		<zip destfile="${target}/jurlmap-${TODAY}-src.zip">
+			<fileset dir=".">
+				<include name="COPYING"/>
+				<include name="COPYING.LGPL"/>
+				<include name="README"/>
+				<include name="CHANGES"/>
+				<include name="*.xml"/>
+				<include name="src/**"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="api" description="Create javadoc">
+		<delete dir="${target}/api"/>
+		
+		<javadoc 
+			packagenames="com.pagegoblin.jurlmap.*"
+			excludepackagenames="com.pagegoblin.jurlmap.property.*"
+			sourcepath="src"
+			defaultexcludes="yes"
+			destdir="target/api"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="jurlmap"
+			classpath="${compile.classpath}">
+		<link href="http://jurlmap.pagegoblin.com/api"/>
+		</javadoc>
+	</target>
+
+	<target name="clean" description="Clean">
+		<delete dir="${target}"/>
+	</target>
+</project>

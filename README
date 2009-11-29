@@ -1,0 +1,33 @@
+jurlmap - RESTful URLs for Java.
+Copyright (C) 2009 Manuel Tomis support@pagegoblin.com
+
+This library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Download
+========
+Available on official website: http://jurlmap.pagegoblin.com
+Download: http://jurlmap.pagegoblin.com/download
+
+Compiling
+=========
+jurlmap depends on the servlet api (jar not included in download). You can do one of the following:
+- automatically resolve the dependency using ivy. If you have ivy configured with your ant 
+  setup simply run: ant resolve  
+- if you want you can manually copy the servlet jar in the lib/ subdirectory
+- or you can reconfigure the compile classpath in build.xml to point to where you have the servlet api jar.
+
+Use
+===
+See website: http://jurlmap.pagegoblin.com/manual
