@@ -75,7 +75,7 @@ class Scanner {
         } else if (Character.isDigit(c)) {
             type = Type.NUMBER;
             parseNumber();
-        } else if (Character.isLetter(c) || c == '_') {
+        } else if (Character.isLetter(c) || c == '_' || c == '.') {
             type = Type.NAME;
             parseName();
         } else {
@@ -97,7 +97,7 @@ class Scanner {
 
     private void parseName() throws IOException {
         int c = in.peek();
-        while (Character.isLetterOrDigit(c) || c == '_' || c == ':') {
+        while (Character.isLetterOrDigit(c) || c == '_' || c == ':' || c == '.') {
             out.append((char)in.read());
             c = in.peek();
         }

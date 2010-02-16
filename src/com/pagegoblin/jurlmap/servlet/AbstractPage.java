@@ -49,8 +49,12 @@ abstract public class AbstractPage implements Page {
     }
     
     protected boolean dispatch() {
-        PathSet paths = (PathSet)request.getAttribute(AttributeNames.PATH_SET);
         String path = (String)request.getAttribute(AttributeNames.EXTRA_PATH);
+        return dispatch(path);
+    }
+    
+    protected boolean dispatch(String path) {
+        PathSet paths = (PathSet)request.getAttribute(AttributeNames.PATH_SET);
         
         if (paths == null || path == null) {
             return false;
