@@ -57,8 +57,8 @@
 		<delete dir="${target}/api"/>
 		
 		<javadoc 
-			packagenames="com.pagegoblin.jurlmap.*"
-			excludepackagenames="com.pagegoblin.jurlmap.property.*"
+			packagenames="com.codegremlins.jurlmap.*"
+			excludepackagenames="com.codegremlins.jurlmap.property.*"
 			sourcepath="src"
 			defaultexcludes="yes"
 			destdir="target/api"
