@@ -18,6 +18,7 @@
 
 package com.codegremlins.jurlmap.pattern;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,6 +43,16 @@ abstract public class AbstractPathSet<T, U> {
     }
     
     protected void addPath(String path, U target, boolean named, int defaultHttpMethods) {
+        if (path != null && path.indexOf('(') >= 0) {
+            for (String item : new PartCombinator(new PeekReader(new StringReader(path)), null).values()) {
+                addIndividualPath(item, target, named, defaultHttpMethods);
+            }
+        } else {
+            addIndividualPath(path, target, named, defaultHttpMethods);
+        }
+    }
+    
+    protected void addIndividualPath(String path, U target, boolean named, int defaultHttpMethods) {
         PathPattern<U> pattern = new PathPattern<U>(target, path, named, defaultHttpMethods);
         String key = pattern.getKey();
         

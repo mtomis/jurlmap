@@ -1,4 +1,7 @@
 Version 0.6
 * Dots allowed in patterns
+* Changes package name
+* (subpattern) syntax added
 
-Initial Release
+Version 0.5
+* Initial Release
