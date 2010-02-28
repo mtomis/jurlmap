@@ -1,4 +1,5 @@
 Version 0.6
+* Pluggable serialization
 * Paging and file extension extraction from paths
 * Dots allowed in patterns
 * Changed package name

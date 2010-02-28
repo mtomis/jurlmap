@@ -48,12 +48,12 @@ abstract public class AbstractPage implements Page {
         }
     }
     
-    protected boolean dispatch() {
+    protected boolean dispatch() throws ServletException, IOException {
         String path = (String)request.getAttribute(AttributeNames.EXTRA_PATH);
         return dispatch(path);
     }
     
-    protected boolean dispatch(String path) {
+    protected boolean dispatch(String path) throws ServletException, IOException {
         PathSet paths = (PathSet)request.getAttribute(AttributeNames.PATH_SET);
         
         if (paths == null || path == null) {
@@ -62,7 +62,7 @@ abstract public class AbstractPage implements Page {
         
         BoundMethod method = paths.resolve(this, path, HttpMethods.getMethod(request.getMethod()));
         if (method != null) {
-            method.invoke();
+            serialize(method.invoke());
             return true;
         } else {
             return false;
@@ -98,5 +98,8 @@ abstract public class AbstractPage implements Page {
             getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return false;
         }
+    }
+    
+    protected void serialize(Object object) throws ServletException, IOException {
     }
 }
