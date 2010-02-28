@@ -1,6 +1,7 @@
 Version 0.6
+* Paging and file extension extraction from paths
 * Dots allowed in patterns
-* Changes package name
+* Changed package name
 * (subpattern) syntax added
 
 Version 0.5

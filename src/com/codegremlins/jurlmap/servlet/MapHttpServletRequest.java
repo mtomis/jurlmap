@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 @SuppressWarnings("unchecked")
 class MapHttpServletRequest extends HttpServletRequestWrapper {
     private Map<String, String[]> parameters = new HashMap<String, String[]>();
+    private String requestURI = null;
 
     public MapHttpServletRequest(HttpServletRequest request) {
         super(request);
@@ -129,5 +130,18 @@ class MapHttpServletRequest extends HttpServletRequestWrapper {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    @Override
+    public String getRequestURI() {
+        if (requestURI == null) {
+            return super.getRequestURI();
+        } else {
+            return requestURI;
+        }
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
     }
 }

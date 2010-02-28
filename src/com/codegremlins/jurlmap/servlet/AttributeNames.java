@@ -1,6 +1,6 @@
 /*
  *  jurlmap - RESTful URLs for Java.
- *  Copyright (C) 2009 Manuel Tomis support@pagegoblin.com
+ *  Copyright (C) 2009 Manuel Tomis support@codegremlins.com
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -26,23 +26,29 @@ public interface AttributeNames {
     /**
      *  Original request uri
      */
-    public final String REQUEST_URI = "com.pagegoblin.jurlmap.DispatchFilter.REQUEST_URI";
+    public final String REQUEST_URI = "com.codegremlins.jurlmap.DispatchFilter.REQUEST_URI";
     
     /**
      * Original request url
      */
-    public final String REQUEST_URL = "com.pagegoblin.jurlmap.DispatchFilter.REQUEST_URL";
+    public final String REQUEST_URL = "com.codegremlins.jurlmap.DispatchFilter.REQUEST_URL";
     
     /**
      * Path that was matched against pattern
      */
-    public final String PATH = "com.pagegoblin.jurlmap.DispatchFilter.PATH";
+    public final String PATH = "com.codegremlins.jurlmap.DispatchFilter.PATH";
     
     /**
      * Extra part at end of matched path (if path ends with /*)
      */
-    public final String EXTRA_PATH = "com.pagegoblin.jurlmap.DispatchFilter.EXTRA_PATH";
+    public final String EXTRA_PATH = "com.codegremlins.jurlmap.DispatchFilter.EXTRA_PATH";
     
-    public final String PAGE = "com.pagegoblin.jurlmap.DispatchFilter.PAGE";
-    public final String PATH_SET = "com.pagegoblin.jurlmap.DispatchFilter.PATH_SET";
+    public final String PAGE = "com.codegremlins.jurlmap.DispatchFilter.PAGE";
+    public final String PATH_SET = "com.codegremlins.jurlmap.DispatchFilter.PATH_SET";
+
+
+    // TODO Rename
+    public final String PAGING = "com.codegremlins.jurlmap.DispatchFilter.PAGING";
+    public final String PAGING_SIZE = "com.codegremlins.jurlmap.DispatchFilter.PAGING_SIZE";
+    public final String DISPOSITION = "com.codegremlins.jurlmap.DispatchFilter.DISPOSITION";
 }

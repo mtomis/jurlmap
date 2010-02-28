@@ -44,6 +44,9 @@ abstract public class DispatchFilter implements Filter {
     private ServletPathSet pages = new ServletPathSet();
     private Map<Class<?>, PathSet> pathMap = new CopyOnWriteHashMap<Class<?>, PathSet>();
     private ServletContext servletContext;
+
+    private boolean usePaging = false;
+    private boolean useDisposition = false;
     
     public DispatchFilter() {
         configure();
@@ -113,11 +116,13 @@ abstract public class DispatchFilter implements Filter {
             HttpServletRequest request = (HttpServletRequest)_request;
             HttpServletResponse response = (HttpServletResponse)_response;
 
+            request = new MapHttpServletRequest(request);
+            processPath((MapHttpServletRequest)request);
+            
             request.setAttribute(AttributeNames.REQUEST_URI, request.getRequestURI());               
             request.setAttribute(AttributeNames.REQUEST_URL, request.getRequestURL().toString());                
             
             String path = request.getRequestURI().substring(request.getContextPath().length());
-            request = new MapHttpServletRequest(request);
             Object target = pages.resolve((MapHttpServletRequest)request, path, HttpMethods.getMethod(request.getMethod()));
             
             request.setAttribute(AttributeNames.PATH, path);             
@@ -151,7 +156,88 @@ abstract public class DispatchFilter implements Filter {
         
         return paths;
     }
+
+    private void processPath(MapHttpServletRequest request) {
+        if (usePaging) {
+            processPaging(request);
+        }
+
+        if (useDisposition) {
+            processDisposition(request);
+        }
+    }
+    
+    private void processPaging(MapHttpServletRequest request) {
+        String path = request.getRequestURI();
+        
+        int index = path.lastIndexOf("/page/");
+        if (index != -1) {
+            String url = path.substring(0, index);
+            String[] elements = path.substring(index + 6).split("/");
+            
+            if (elements.length < 1 || elements.length > 2) {
+                return;
+            }
+            
+            int page = -1;
+            int size = -1;
+            
+            try {
+                page = Integer.parseInt(elements[0]);
+                if (elements.length > 1) {
+                    size = Integer.parseInt(elements[1]);
+                }
+            } catch (NumberFormatException ex) {
+                // Not correct paging format, maybe it is something else
+                return;
+            }
+            
+            if (page > -1) {
+                request.setAttribute(AttributeNames.PAGING, page);
+            }
+            
+            if (size > -1) {
+                request.setAttribute(AttributeNames.PAGING_SIZE, size);
+            }
+
+            if (url.equals("")) {
+                url = "/";
+            }
+
+            path = url;
+            request.setRequestURI(path);
+        }
+    }
+        
+    private void processDisposition(MapHttpServletRequest request) {
+        String path = request.getRequestURI();
+        int index = path.lastIndexOf('.');
+        if (index != -1) {
+            String url = path.substring(0, index);
+            String disposition = path.substring(index + 1);
+            
+            if (disposition.indexOf('/') > -1) {
+                return;
+            }
+            
+            if (url.equals("")) {
+                url = "/";
+            }
+
+            request.setAttribute(AttributeNames.DISPOSITION, disposition);
+            path = url;
+            request.setRequestURI(path);
+        }
+    }    
     
     public void destroy() {
+    }
+    
+    protected void usePaging() {
+        usePaging = true;
+    }
+    
+    protected void useDisposition() {
+        useDisposition = true;
     }
 }
