@@ -86,6 +86,17 @@ abstract public class DispatchFilter implements Filter {
     
     /**
      * 
+     * @param target When matched will permanently redirect (301) to here
+     * @param patterns Url patterns to be matched
+     */
+    public final void relocate(String target, String ...patterns) {
+        for (String path : patterns) {
+            pages.relocate(target, path);
+        }
+    }
+
+    /**
+     * 
      * @param clazz Class to be used to handling request. A new instance is created per request. 
      * @param patterns Url patterns to be matched
      */

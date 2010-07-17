@@ -40,6 +40,10 @@ class ServletPathSet extends AbstractPathSet<Object, ServletAction> {
         addPath(path, new ServletAction(target, ServletAction.Type.REDIRECT), true, defaultHttpMethods);
     }
 
+    public void relocate(String target, String path) {
+        addPath(path, new ServletAction(target, ServletAction.Type.RELOCATE), true, defaultHttpMethods);
+    }
+
     public void deploy(Class clazz, String[] mpath) {
         if (mpath != null) {
             for (String path : mpath) {

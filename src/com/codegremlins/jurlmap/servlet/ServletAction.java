@@ -31,7 +31,7 @@ import com.codegremlins.jurlmap.pattern.PathPattern;
 import com.codegremlins.jurlmap.pattern.PatternException;
 
 class ServletAction {
-    public enum Type {FORWARD, REDIRECT, DEPLOY};
+    public enum Type {FORWARD, REDIRECT, RELOCATE, DEPLOY};
     
     private Class<? extends Page> pageClass;
     private String target;
@@ -51,7 +51,7 @@ class ServletAction {
     public Object invoke(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (type == Type.FORWARD) {
             request.getRequestDispatcher(target).forward(request, response);
-        } else if (type == Type.REDIRECT) {
+        } else if (type == Type.REDIRECT || type == Type.RELOCATE) {
             StringBuilder out = new StringBuilder(target);
             boolean first = target.indexOf('?') == -1;
             
@@ -72,7 +72,13 @@ class ServletAction {
                 }
             }
             
-            response.sendRedirect(out.toString());
+            if (type == Type.REDIRECT) {
+                response.sendRedirect(out.toString());
+            } else {
+                response.setHeader("Location", out.toString());
+                response.setHeader("Connection", "close");
+                response.setStatus(301);
+            }
         } else if (type == Type.DEPLOY) {
             try {
                 Page handler = pageClass.newInstance();
