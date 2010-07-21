@@ -20,6 +20,7 @@ package com.codegremlins.jurlmap;
 
 import java.lang.reflect.Method;
 
+import com.codegremlins.jurlmap.pattern.Lubricant;
 import com.codegremlins.jurlmap.pattern.PatternException;
 
 public class BoundMethod {
@@ -31,6 +32,17 @@ public class BoundMethod {
         this.self = self;
         this.method = method;
         this.parameters = parameters;
+        
+        if (method != null && parameters != null) {
+            Class[] methodTypes = method.getParameterTypes();
+            if (methodTypes.length != parameters.length) {
+                throw new PatternException("Parameters don't match for `" + self.getClass() + "#" + method.getName() + "`");
+            }
+            
+            for (int i = 0; i < parameters.length; i++) {
+                parameters[i] = Lubricant.apply(parameters[i], methodTypes[i]);
+            }
+        }
     }
 
     public Object invoke() {

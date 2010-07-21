@@ -1,4 +1,5 @@
 Version 0.6
+* Some parameter type automatic conversions long->int|short|byte, also any type->boolean
 * 301 redirects
 * Pluggable serialization
 * Paging and file extension extraction from paths

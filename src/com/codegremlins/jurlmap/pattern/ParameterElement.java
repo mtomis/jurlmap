@@ -68,7 +68,7 @@ class ParameterElement extends Element {
             } else {
                 Property property = Properties.getProperty(object.getClass(), properties);
                 if (property != null) {
-                    property.setValue(object, value);
+                    property.setValue(object, Lubricant.apply(value, property.getType()));
                 }
             }
         } else {

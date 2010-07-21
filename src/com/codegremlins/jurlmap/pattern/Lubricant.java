@@ -18,35 +18,29 @@
 
 package com.codegremlins.jurlmap.pattern;
 
-class IntegerElement extends ParameterElement {
-    @Override
-    public boolean match(PathInput input) {
-        if (input.end()) {
-            return isOptional();
-        } else {
-            String item = input.value();
-            try {
-                long n = Long.parseLong(item);
-                input.next();
-                
-                if (input.isBind()) {
-                    bind(input, n);
-                }
-            } catch (NumberFormatException ex) {
-                return isOptional();
+/**
+ * Lubricates parameters so that they fit into invocation destinations 
+ *
+ */
+public final class Lubricant {
+    private Lubricant() {
+    }
+    
+    public final static Object apply(Object value, Class<?> type) {
+        if (value instanceof Long) {
+            if (type == int.class || type == Integer.class) {
+                return ((Long)value).intValue();
+            } else if (type == short.class || type == Short.class) {
+                return ((Long)value).shortValue();
+            } else if (type == byte.class || type == Byte.class) {
+                return ((Long)value).byteValue();
             }
+        } 
         
-            return true;
+        if (!(value instanceof Boolean) && (type == boolean.class || type == Boolean.class)) {
+            return value != null;
         }
-    }
-    
-    @Override
-    public int priority() {
-        return 5;
-    }
-    
-    @Override
-    public String toString() {
-        return "/%";
+        
+        return value;
     }
 }
