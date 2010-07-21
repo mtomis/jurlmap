@@ -1,5 +1,5 @@
 <ivy-module version="2.0">
-	<info organisation="pagegoblin.com" module="jurlmap"/>
+	<info organisation="codegremlins.com" module="jurlmap"/>
 
 	<dependencies>
 		<dependency org="javax.servlet" name="servlet-api" rev="2.5"/>

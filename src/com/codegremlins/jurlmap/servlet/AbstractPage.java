@@ -1,6 +1,6 @@
 /*
  *  jurlmap - RESTful URLs for Java.
- *  Copyright (C) 2009 Manuel Tomis support@pagegoblin.com
+ *  Copyright (C) 2009 Manuel Tomis manuel@codegremlins.com
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by

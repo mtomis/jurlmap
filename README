@@ -1,5 +1,5 @@
 jurlmap - RESTful URLs for Java.
-Copyright (C) 2009 Manuel Tomis support@pagegoblin.com
+Copyright (C) 2009 Manuel Tomis manuel@codegremlins.com
 
 This library is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -17,8 +17,8 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 Download
 ========
-Available on official website: http://jurlmap.pagegoblin.com
-Download: http://jurlmap.pagegoblin.com/download
+Available on official website: http://jurlmap.codegremlins.com
+Download: http://jurlmap.codegremlins.com/download
 
 Compiling
 =========
@@ -30,4 +30,4 @@ jurlmap depends on the servlet api (jar not included in download). You can do on
 
 Use
 ===
-See website: http://jurlmap.pagegoblin.com/manual
+See website: http://jurlmap.codegremlins.com/manual

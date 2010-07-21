@@ -67,7 +67,7 @@
 			use="true"
 			windowtitle="jurlmap"
 			classpath="${compile.classpath}">
-		<link href="http://jurlmap.pagegoblin.com/api"/>
+		<link href="http://jurlmap.codegremlins.com/api"/>
 		</javadoc>
 	</target>
 
