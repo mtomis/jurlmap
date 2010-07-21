@@ -1,10 +1,10 @@
 Version 0.6
 * Some parameter type automatic conversions long->int|short|byte, also any type->boolean
 * 301 redirects
-* Pluggable serialization
+* Initial support for pluggable serialization
 * Paging and file extension extraction from paths
 * Dots allowed in patterns
-* Changed package name
+* Changed package name to com.codegremlins.
 * (subpattern) syntax added
 
 Version 0.5
