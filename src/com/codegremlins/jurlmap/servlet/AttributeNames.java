@@ -46,8 +46,9 @@ public interface AttributeNames {
     public final String PAGE = "com.codegremlins.jurlmap.DispatchFilter.PAGE";
     public final String PATH_SET = "com.codegremlins.jurlmap.DispatchFilter.PATH_SET";
 
-
-    // TODO Rename
+    /**
+     * 
+     */
     public final String PAGING = "com.codegremlins.jurlmap.DispatchFilter.PAGING";
     public final String PAGING_SIZE = "com.codegremlins.jurlmap.DispatchFilter.PAGING_SIZE";
     public final String DISPOSITION = "com.codegremlins.jurlmap.DispatchFilter.DISPOSITION";
