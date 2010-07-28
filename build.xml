@@ -2,11 +2,12 @@
 	<property file="build.properties"/>
 	<property name="target" value="target"/>
 	<property name="compile.classpath" value="lib/servlet-api-2.5.jar"/>
+	<property name="project.version" value="0.6"/>
 
 	<target name="build" depends="compile" description="Build compiled jar">
 		<mkdir dir="${target}"/>
 
-		<jar destfile="${target}/jurlmap.jar">
+		<jar destfile="${target}/jurlmap-${project.version}.jar">
 			<fileset dir="${target}/classes"/>
 
 			<fileset dir=".">
@@ -42,14 +43,14 @@
 		</tstamp>
 
 		<zip destfile="${target}/jurlmap-${TODAY}-src.zip">
-			<fileset dir=".">
+			<zipfileset dir="." prefix="jurlmap-${project.version}">
 				<include name="COPYING"/>
 				<include name="COPYING.LGPL"/>
 				<include name="README"/>
 				<include name="CHANGES"/>
 				<include name="*.xml"/>
 				<include name="src/**"/>
-			</fileset>
+			</zipfileset>
 		</zip>
 	</target>
 
