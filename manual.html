@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,700|Merriweather:300,700' rel='stylesheet' type='text/css'>    
+    <link href="/styles/main.css" rel="stylesheet" type="text/css">    
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <title> Jurlmap Manual</title>
+  </head>
+  <body>
+    <div class="main">
+    
+  <header>
+    <div class="layout">
+    <a href="/">j<span>url</span>map</a>
+    </div>
+  </header>
+  
+    
+    
+    <article class="content layout">
+      <header>
+        
+        <h1> Jurlmap Manual</h1>
+      </header>
+      <div><h2 id="what-is-jurlmap">What is jurlmap</h2>
+<p>A Java library for enabling your webapps to have clean, REST like urls. Rather than being a swiss army knife tool
+like others, it is optimized for this single role, and as such it is (hopefully) easier to use, less verbose and packed with convenience features (such as binding matched url parts directly to javabean properties).</p>
+<h2 id="how-can-i-add-jurlmap-to-my-application">How can I add jurlmap to my application</h2>
+<p>Download the jar and add it to your application library directory. Create a subclass of <code>com.codegremlins.jurlmap.DispatchFilter</code> and override the <code>configure</code> method to add your configuration. Add a mapping of your filter to your <code>web.xml</code> file.  </p>
+<pre><code class="lang-xml hljs"><span class="hljs-tag">&lt;<span class="hljs-name">filter</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">filter-name</span>&gt;</span>DispatchFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-name</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">filter-class</span>&gt;</span>com.myapp.MyDispatchFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-class</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">filter</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">filter-mapping</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">filter-name</span>&gt;</span>DispatchFilter<span class="hljs-tag">&lt;/<span class="hljs-name">filter-name</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">url-pattern</span>&gt;</span>/*<span class="hljs-tag">&lt;/<span class="hljs-name">url-pattern</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">filter-mapping</span>&gt;</span>
+</code></pre>
+<h2 id="how-do-i-configure-url-mappings">How do I configure URL mappings</h2>
+<p>Lets start with some examples:</p>
+<pre><code class="lang-java hljs"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// Match given pattern, in which $ mean a string, bind to parameter</span>
+    <span class="hljs-comment">// `Username` and forward to profile.jsp</span>
+    <span class="hljs-comment">// Parameter will be accessible via request.getParameter()</span>
+    forward(<span class="hljs-string">"/profile.jsp"</span>, <span class="hljs-string">"/profile/$Username"</span>);
+
+    <span class="hljs-comment">// Match given pattern in which % means integer and * mean until end of pattern,</span>
+    <span class="hljs-comment">// bind integer to parameter ArticleId and forward to article.jsp</span>
+    forward(<span class="hljs-string">"/article.jsp"</span>, <span class="hljs-string">"/article/%ArticleId/*"</span>);
+
+    <span class="hljs-comment">// match pattern, bind parameter and redirect to `/servlets/profileservlet?Username=...`</span>
+    redirect(<span class="hljs-string">"/servlets/profileservlet"</span>, <span class="hljs-string">"/member/$Username"</span>);
+
+    <span class="hljs-comment">// Same as above only send 301 permanent redirect</span>
+    relocate(<span class="hljs-string">"/servlets/profileservlet"</span>, <span class="hljs-string">"/member/$Username"</span>);
+
+
+    <span class="hljs-comment">// Shows how to add http methods to patterns. First one will be run when pattern matches</span>
+    <span class="hljs-comment">// AND method is POST (and only POST). Second will run when method is GET. </span>
+    <span class="hljs-comment">// Default is GET and POST.</span>
+    <span class="hljs-comment">// Both patterns are the same (besides the http method that is).</span>
+    forward(<span class="hljs-string">"/edit_person.jsp"</span>, <span class="hljs-string">"/member/$Username;POST"</span>);
+    forward(<span class="hljs-string">"/person.jsp"</span>, <span class="hljs-string">"/member/$Username"</span>);
+
+    <span class="hljs-comment">// Shows use of deploy rule</span>
+    deploy(LogoutPage.class, <span class="hljs-string">"/logout"</span>);
+
+    <span class="hljs-comment">// Deploy is also possible without passing a pattern parameter, if LoginPage class is </span>
+    <span class="hljs-comment">// annotated with a @Deploy(path) annotation</span>
+    deploy(LoginPage.class);
+
+    <span class="hljs-comment">// Shows that multiple patterns are possible in single rule call.</span>
+    <span class="hljs-comment">// Also demonstrates `enum` pattern element where one of several given values is matched</span>
+    deploy(ArticlesHomePage.class, <span class="hljs-string">"/"</span>, <span class="hljs-string">"/sort/[newest|oldest|hottest]SortOrder"</span>);
+}
+</code></pre>
+<p>The above examples show 90% of what you need to know to effectively use jurlmap.</p>
+<p>Rather than having external configuration files jurlmap is configured in plain old Java. </p>
+<p>As can be seen from the example (the one way way above...) there are currently four possible actions:
+<code>forward</code>, <code>redirect</code>, <code>relocate</code> and <code>deploy</code>. Each takes as parameters a target, and one (or in the case of <code>deploy</code> zero) or multiple
+patterns. On invocation if the pattern is matched the action is executed...obviously.</p>
+<p>What do these action types mean exactly:</p>
+<ul>
+<li><p><code>forward</code> When matched it will make parameters accesible via request.getParameter and will forward to <code>target</code></p>
+</li>
+<li><p><code>redirect</code> When matched it will append parameters as query string and will send redirect to <code>target</code></p>
+</li>
+<li><p><code>relocate</code> It is similar to <code>redirect</code> but sends 301 permanent redirect.</p>
+</li>
+<li><p><code>deploy</code> When matched it will create a new instance of <code>target</code> class, will bind parameters to new instance via setters or raw fields (whichever it finds) and finally invoke the <code>service</code> method. </p>
+</li>
+</ul>
+<p>The first two action types are useful when you are working with an existing application, or an application written in an existing framework for which you want to enable clean URLs. The <code>deploy</code> action is more interesting if you are developing a new application and you are looking for an alternative to the limited servlet mapping facilities of web.xml.</p>
+<h2 id="pattern-syntax">Pattern syntax</h2>
+<p>The available pattern syntax is very simple:</p>
+<p>A pattern is separated between a <code>;</code> character. Anything before <code>;</code> is the path pattern. Anything after is the http methods
+such as GET, POST, PUT, DELETE. You can specify multiple http methods separated by | such as <code>GET|PUT</code>. </p>
+<p>Any given path is split at each <code>/</code> character and each subelement can be one of the following:</p>
+<ul>
+<li><p><code>$</code> Matches any string.</p>
+</li>
+<li><p><code>%</code> Matches a long/integer. </p>
+</li>
+<li><p><code>[]</code> Matches one of several options separated by <code>|</code> in the like: <code>[options1|option2|option3]</code></p>
+</li>
+<li><p><code>*</code> Matches everything until the end of the pattern, including subsequent <code>/</code>.</p>
+</li>
+<li><p>Any other text is matched as is. it behaves same as [text] with a single element, only in this case it cannot be followed by <code>?</code> or binding options.</p>
+</li>
+</ul>
+<p>If a <code>?</code> follows any of the above elements (except the last one) then that element is optional, that is the pattern matches whether the element is present or not.</p>
+<p>Any of the above elements can be followed by binding options that specify to which parameter to bind the matched result.
+example</p>
+<p><code>/member/$Username</code> will match a string and bind it to parameter username. Parameters can also be compound such as
+<code>/member/%User.Id</code>, which will work as follows:</p>
+<p>You can define subpatterns by using parenthesis. For example <code>/home(/room/$roomname)</code> will expand to both <code>/home</code> and <code>/home(/room/$roomname)</code> patterns and will match any results that resolves to either pattern.</p>
+<p>For the <code>forward</code> and <code>redirect</code> actions the matched parameter will contain a dot and will be <code>User.Id</code> exactly as give.
+For the <code>deploy</code> action, the result will be more complicated, in that first the object property <code>User</code> will be looked up, a new object will be instantiated to the type of that property, the property set to that object, and the <code>Id</code> property or the new instance will be set. Lets draw a picture to explain that:</p>
+<p>Assuming the following:</p>
+<pre><code class="lang-java hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyPage</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Page</span> </span>{
+    User user;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>{
+   <span class="hljs-keyword">int</span> id;
+}
+</code></pre>
+<p>When binding <code>User.Id</code> this will happen:  </p>
+<pre><code class="hljs haml">-<span class="ruby"> result = new User()
+</span>-<span class="ruby"> result.id = @@MatchedIntegerParameter@@
+</span>-<span class="ruby"> myPage.user = result;
+</span></code></pre><p>There is one case where the binding syntax is a little different. It is possible to annotate methods of a class with pattern annotations <code>@Deploy</code> and then use them as targets in a pattern dispatch like:</p>
+<pre><code class="lang-java hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span> </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> PathSet PATHS = <span class="hljs-keyword">new</span> PathSet(MyClass.class);
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">doMe</span><span class="hljs-params">(String path)</span> </span>{
+              PATHS.dispatch(<span class="hljs-keyword">this</span>, path);
+    }
+
+    <span class="hljs-meta">@Deploy</span>(<span class="hljs-string">"/something/to/do"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">runSomething</span><span class="hljs-params">()</span> </span>{
+        ...
+    }
+
+    <span class="hljs-meta">@Deploy</span>(<span class="hljs-string">"/person/$1/%2/%3.Id"</span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">runSomething</span><span class="hljs-params">(String parameter1, <span class="hljs-keyword">int</span> parameter2, User parameter3)</span> </span>{
+        ...
+    }
+}
+</code></pre>
+<p>In this case, as the examples show the parameter bindings are specified as numbers, corresponding to the method parameters as they appear in order.</p>
+<p>One problem you will never have with jurlmap is the issue of trailing /. In many frameworks <code>/path</code> is different from <code>/path/</code> and sometimes you get one when you want the other or you are confused about which is which. With jurlmap all extra <code>/</code> characters are ignored so <code>/my/path</code> is the same as <code>/my/path/</code> which is the same as <code>/my/////path//</code> </p>
+<h2 id="important-classes">Important Classes</h2>
+<p>Here is a list of the classes and interfaces that you can use as part of jurlmap:</p>
+<pre><code class="lang-java hljs"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DispatchFilter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">javax</span>.<span class="hljs-title">servlet</span>.<span class="hljs-title">Filter</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">configure</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">forward</span><span class="hljs-params">(String target, String ...patterns)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">redirect</span><span class="hljs-params">(String target, String ...patterns)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">deploy</span><span class="hljs-params">(Class&lt;?&gt; clazz, String ...patterns)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setDispatchServlet</span><span class="hljs-params">(String dispatchServlet)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setDefaultHttpMethods</span><span class="hljs-params">(String methods)</span>
+}
+
+<span class="hljs-keyword">public</span> class DispatchServlet </span>{
+}
+
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Page</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">service</span><span class="hljs-params">(ServletContext context, HttpServletRequest request, HttpServletResponse response)</span> <span class="hljs-keyword">throws</span> IOException, ServletException</span>;
+}
+
+
+<span class="hljs-keyword">abstract</span> <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AbstractPage</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Page</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ServletException, IOException</span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">dispatch</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">dispatch</span><span class="hljs-params">(String path)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> HttpServletRequest <span class="hljs-title">getRequest</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> HttpServletResponse <span class="hljs-title">getResponse</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> ServletContext <span class="hljs-title">getServletContext</span><span class="hljs-params">()</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">forward</span><span class="hljs-params">(String target)</span> <span class="hljs-keyword">throws</span> ServletException, IOException</span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">redirect</span><span class="hljs-params">(String target)</span> <span class="hljs-keyword">throws</span> IOException</span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">modified</span><span class="hljs-params">(<span class="hljs-keyword">long</span> lastModified)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">serialize</span><span class="hljs-params">(Object object)</span></span>;    
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PathSet</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">PathSet</span><span class="hljs-params">(Class targetClass)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">dispatch</span><span class="hljs-params">(Object self, String path)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Object <span class="hljs-title">dispatch</span><span class="hljs-params">(Object self, String path, HttpServletRequest request)</span></span>;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-meta">@Retention</span>(RetentionPolicy.RUNTIME) 
+<span class="hljs-meta">@interface</span> Deploy {
+    String[] value();
+}
+</code></pre>
+<h2 id="what-else-">What else?</h2>
+<p>License is LGPL.</p>
+<p>If you think there is something missing either from this manual or a feature that should be added to jurlmap let me know.</p>
+</div>
+    </article>
+  
+  
+    
+  <footer>
+    <div class="layout">
+      <a href="http://codegremlins.com/privacy.html">Privacy</a>
+      <a href="http://codegremlins.com/about.html">About Me</a>
+      <div>
+      Copyright &copy; 2009-2016 Manuel Tomis
+      </div>    
+    </div>
+  </footer>
+  
+    </div>
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-8321340-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>    
+  </body>
+</html>
+  
